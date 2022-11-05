@@ -9,43 +9,34 @@ const Stats: FunctionComponent<StatsProps> = () => {
 	const [transactions, setTransactions] = useState([]);
 	const address = useAppSelector(selectAddress);
 
-	const loadData = async () => {
-		//fetch data for georli network - mainnet not free :(
-		const head = new Headers();
-		head.append('Content-Type', 'application/json');
-		head.append('X-API-Key', process.env.REACT_APP_BLOCK_API_KEY || '');
-		const options = {
-			method: 'GET',
-			headers: head,
-		};
-		const response: any = await fetch(
-			'https://rest.cryptoapis.io/v2/blockchain-data/ethereum/goerli/blocks/last',
-			options
-		);
-		setBlockHeight(response.data.item.height);
+	const getBlockHeight = async () => {
+		const res = await fetch('https://api.blockcypher.com/v1/eth/main');
+		const response = await res.json();
+		setBlockHeight(response.height);
 	};
 	const getLatestTransacstion = async () => {
-		const head = new Headers();
-		head.append('Content-Type', 'application/json');
-		head.append('X-API-Key', process.env.REACT_APP_BLOCK_API_KEY || '');
-		const options = {
-			method: 'GET',
-			headers: head,
-		};
-		const response: any = await fetch(
-			`https://rest.cryptoapis.io/v2/blockchain-data/ethereum/goerli/addresses/${address}`,
-			options
-		);
-		console.log(response);
-		setTransactions(response.data.items);
+		const res = await fetch(`https://api.etherscan.io/api
+		?module=account
+		&action=txlist
+		&address=${address}
+		&startblock=100000
+		&endblock=99999999
+		&page=1
+		&offset=10
+		&sort=asc
+		&apikey=${process.env.REACT_APP_ETH_API_KEY}`);
+
+		const response = await res.json();
+		setTransactions(response.result);
 	};
 	useEffect(() => {
-		// getLatestTransacstion();
-		// const intervalCall = setInterval(() => loadData(), 60000);
+		getLatestTransacstion();
+		getBlockHeight();
+		const intervalCall = setInterval(() => getBlockHeight(), 30000);
 
 		return () => {
 			// clean up
-			// clearInterval(intervalCall);
+			clearInterval(intervalCall);
 		};
 	}, []);
 
@@ -60,19 +51,11 @@ const Stats: FunctionComponent<StatsProps> = () => {
 						{transactions.map((tran: any) => {
 							return (
 								<div className='transaction-div' key={tran.index}>
-									<li>
-										Transaction ID :
-										4b66461bf88b61e1e4326356534c135129defb504c7acb2fd6c92697d79eb250
-									</li>
-									<li>
-										Transaction Hash :
-										1ec73b0f61359927d02376b35993b756b1097cb9a857bec23da4c98c4977d2b2
-									</li>
-									<li>Fee : 0.00016932 BTC</li>
-									<li>
-										Receipient address : 2MzakdGTEp8SMWEHKwKM4HYv6uNCBXtHpkV
-									</li>
-									<li>Sender address : 2N5PcdirZUzKF9bWuGdugNuzcQrCbBudxv1</li>
+									<li>Transaction Index :{tran.transactionIndex}</li>
+									<li>Transaction Hash: {tran.hash}</li>
+									<li>Block Number : {tran.blockNumber}</li>
+									<li>Sender's address : {tran.from}</li>
+									<li>Receiver's address : {tran.to}</li>
 								</div>
 							);
 						})}
@@ -80,7 +63,8 @@ const Stats: FunctionComponent<StatsProps> = () => {
 				</div>
 
 				<span>
-					Current Block Height : <strong>{blockHeight}</strong>
+					Current Block Height :{' '}
+					<strong>{blockHeight === 0 ? 'Loading...' : blockHeight}</strong>
 				</span>
 			</main>
 		</div>

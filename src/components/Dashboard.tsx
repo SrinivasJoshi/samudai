@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import { gapi } from 'gapi-script';
 
 interface DashboardProps {}
 
@@ -14,27 +15,28 @@ const Dashboard: FunctionComponent<DashboardProps> = () => {
 	}, [isSignedIn]);
 
 	const fetchEvents = async () => {
-		// const response = await fetch(
-		// 	`https://www.googleapis.com/calendar/v3/users/me/calendarList?key=${process.env.REACT_APP_GOOGLE_CLIENT_ID}`
-		// );
-		// console.log(response);
-		// console.log(window.gapi || 'empty');
-		(window as any).gapi.client.calendar.calendarList.list({}).then(
-			function (response: any) {
-				// Handle the results here (response.result has the parsed body).
-				console.log('Response', response);
-			},
-			function (err: any) {
-				console.error('Execute error', err);
-			}
+		const response = await fetch(
+			`https://www.googleapis.com/calendar/v3/users/me/calendarList?key=${process.env.REACT_APP_GOOGLE_CLIENT_ID}`
 		);
+		console.log(response);
+		// console.log(window.gapi || 'empty');
+		// console.log(gapi.client.calendar);
+		// gapi.client.calendar.calendarList.list({}).then(
+		// 	function (response: any) {
+		// 		// Handle the results here (response.result has the parsed body).
+		// 		console.log('Response', response);
+		// 	},
+		// 	function (err: any) {
+		// 		console.error('Execute error', err);
+		// 	}
+		// );
 	};
 	return (
 		<>
 			<h1>Dashboard Page</h1>
 			{!isSignedIn && (
 				<div className='google-login-div'>
-					<GoogleLogin
+					{/* <GoogleLogin
 						onSuccess={(credentialResponse) => {
 							console.log(credentialResponse);
 							setIsSignedIn(true);
@@ -42,7 +44,7 @@ const Dashboard: FunctionComponent<DashboardProps> = () => {
 						onError={() => {
 							console.log('Login Failed');
 						}}
-					/>
+					/> */}
 				</div>
 			)}
 			<div>{events}</div>
