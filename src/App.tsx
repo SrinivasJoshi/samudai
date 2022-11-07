@@ -1,10 +1,9 @@
 import './App.css';
-import { Button } from '@chakra-ui/react';
 import { SiweMessage } from 'siwe';
 import { ethers } from 'ethers';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from './app/hooks';
+import { useAppDispatch } from './app/hooks';
 import { addAddress, addChainId } from './features/crypto/cryptoSlice';
 
 function App() {
@@ -58,9 +57,10 @@ function App() {
 		console.log(await signer.signMessage(message));
 		setisMetaMaskConnected(true);
 		const ad = await signer.getAddress();
+		const chainId = await signer.getChainId();
+
 		setStateAddress(ad);
-		// remove below comment
-		// sendInfo(address,chainId)
+		sendInfo(ad, chainId);
 	}
 	function createSiweMessage(address: string, statement: string) {
 		const message = new SiweMessage({
@@ -83,17 +83,17 @@ function App() {
 			)}
 			{isMetaMaskConnected ? (
 				<div className='otherRoutes'>
-					<Button>
+					<button className='btn'>
 						<Link to={'dashboard'}>Dashboard</Link>
-					</Button>
-					<Button style={{ marginTop: '1rem' }}>
+					</button>
+					<button style={{ marginTop: '1rem' }} className='btn'>
 						<Link to={'stats'}>Stats</Link>
-					</Button>
+					</button>
 				</div>
 			) : (
-				<Button colorScheme='blue' onClick={signInWithEthereum}>
+				<button className='btn' onClick={signInWithEthereum}>
 					Sign In With Ethereum
-				</Button>
+				</button>
 			)}
 		</div>
 	);

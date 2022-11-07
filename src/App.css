@@ -11,6 +11,13 @@
 h1 {
 	text-align: center;
 }
+.btn {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 5px;
+	background-color: aliceblue;
+	color: black;
+}
 .google-login-div {
 	width: 250px;
 	margin: 0 auto;
