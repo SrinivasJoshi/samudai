@@ -23,9 +23,10 @@ const Dashboard = () => {
 	const fetchEvents = async () => {
 		const jwt = localStorage.getItem('JWT');
 		try {
-			const response = await fetch(
+			const res = await fetch(
 				`https://www.googleapis.com/calendar/v3/calendars/srinivasjoshi60@gmail.com/events?key=${jwt}`
 			);
+			const response = await res.json();
 			console.log(response);
 			setEvents(response.items);
 			setEvents((events) => events.reverse());
@@ -36,26 +37,19 @@ const Dashboard = () => {
 	return (
 		<div className='dashboard'>
 			<h1>Dashboard Page</h1>
-			<div>{events}</div>
 			<div className='events'>
-				<div className='dashboard-event'>
-					<li>Created by : Srinivas Joshi</li>
-					<li>Event summary : Last day of school</li>
-					<li>Created at : 2017-03-22T10:55:17.000Z</li>
-					<li>status : tentative</li>
-				</div>
-				<div className='dashboard-event'>
-					<li>Event summary : Last day of school</li>
-					<li>Created at : 2017-03-22T10:55:17.000Z</li>
-					<li>status : tentative</li>
-				</div>
-				<div className='dashboard-event'>
-					<li>Event summary : Last day of school</li>
-					<li>Created at : 2017-03-22T10:55:17.000Z</li>
-					<li>status : tentative</li>
-				</div>
+				{events.map((event) => {
+					return (
+						<div className='dashboard-event'>
+							<li>Event summary : {event.summary}</li>
+							<li>Created at : {event.created}</li>
+							<li>Status : {event.status} </li>
+							<li>Created by : {event.creator.displayName}</li>
+							<li>Organised by : {event.organizer.displayName}</li>
+						</div>
+					);
+				})}
 			</div>
-
 			<div id='signInDiv'></div>
 		</div>
 	);

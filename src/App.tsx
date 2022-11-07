@@ -5,11 +5,7 @@ import { ethers } from 'ethers';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import {
-	addAddress,
-	addChainId,
-	selectAddress,
-} from './features/crypto/cryptoSlice';
+import { addAddress, addChainId } from './features/crypto/cryptoSlice';
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -61,6 +57,8 @@ function App() {
 		);
 		console.log(await signer.signMessage(message));
 		setisMetaMaskConnected(true);
+		const ad = await signer.getAddress();
+		setStateAddress(ad);
 		// remove below comment
 		// sendInfo(address,chainId)
 	}
