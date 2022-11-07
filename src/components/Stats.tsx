@@ -23,7 +23,7 @@ const Stats: FunctionComponent<StatsProps> = () => {
 		&endblock=99999999
 		&page=1
 		&offset=10
-		&sort=asc
+		&sort=desc
 		&apikey=${process.env.REACT_APP_ETH_API_KEY}`);
 
 		const response = await res.json();
@@ -45,12 +45,14 @@ const Stats: FunctionComponent<StatsProps> = () => {
 			<h1>Stats Page</h1>
 			<main>
 				<div className='all-transactions'>
-					<h2>List of transactions :</h2>
+					<h2>List of latest transactions :</h2>
 					<div>
 						{transactions.length === 0 && 'No transactions done!'}
-						{transactions.map((tran: any) => {
+						{transactions.map((tran: any, i: number) => {
+							if (i > 4) return;
 							return (
 								<div className='transaction-div' key={tran.index}>
+									<li>Time Stamp : {tran.timeStamp} </li>
 									<li>Transaction Index :{tran.transactionIndex}</li>
 									<li>Transaction Hash: {tran.hash}</li>
 									<li>Block Number : {tran.blockNumber}</li>

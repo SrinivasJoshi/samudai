@@ -18,7 +18,15 @@ function App() {
 	const provider = new ethers.providers.Web3Provider(window.ethereum);
 	const signer = provider.getSigner();
 	const [isMetaMaskConnected, setisMetaMaskConnected] = useState(false);
-	const stateAddress = useAppSelector(selectAddress);
+	const [stateAddress, setStateAddress] = useState('');
+
+	useEffect(() => {
+		provider
+			.send('eth_requestAccounts', [])
+			.catch(() => alert('Cannot proceed without metamask'));
+		metamask();
+	}, []);
+
 	const metamask = async () => {
 		const accounts = await provider.listAccounts();
 		if (accounts.length > 0) {
@@ -26,17 +34,10 @@ function App() {
 		}
 		const address = await signer.getAddress();
 		const chainId = await signer.getChainId();
-
+		setStateAddress(address);
 		dispatch(addAddress(address));
 		dispatch(addChainId(chainId));
-		// RMEOVE THIS : sendInfo(address,chainId)
 	};
-	useEffect(() => {
-		provider
-			.send('eth_requestAccounts', [])
-			.catch(() => alert('Cannot proceed without metamask'));
-		metamask();
-	}, []);
 
 	async function sendInfo(address: string, chainId: number) {
 		const reqBody = {
@@ -60,6 +61,8 @@ function App() {
 		);
 		console.log(await signer.signMessage(message));
 		setisMetaMaskConnected(true);
+		// remove below comment
+		// sendInfo(address,chainId)
 	}
 	function createSiweMessage(address: string, statement: string) {
 		const message = new SiweMessage({
@@ -70,6 +73,7 @@ function App() {
 			version: '1',
 			chainId: 1,
 		});
+		console.log(message);
 		return message.prepareMessage();
 	}
 	return (

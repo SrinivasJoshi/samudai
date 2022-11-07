@@ -29,6 +29,7 @@ h1 {
 	padding: 0.5rem 1rem;
 	margin: 1rem 0;
 }
+/* STATS */
 .stats,
 .dashboard {
 	margin: 1rem;
@@ -44,7 +45,8 @@ h1 {
 .all-transactions {
 	width: fit-content;
 }
-.transaction-div {
+.transaction-div,
+.dashboard-event {
 	background-color: aliceblue;
 	display: flex;
 	flex-direction: column;
@@ -60,4 +62,10 @@ h1 {
 	margin-right: 2rem;
 	height: fit-content;
 	border-radius: 5px;
+}
+/* DASHBOARD */
+.events {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
 }
