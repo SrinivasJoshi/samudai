@@ -21,13 +21,16 @@ const Dashboard = () => {
 	}, []);
 
 	const fetchEvents = async () => {
-		const jwt = localStorage.getItem('JWT');
 		try {
 			const res = await fetch(
-				`https://www.googleapis.com/calendar/v3/calendars/srinivasjoshi60@gmail.com/events?key=${jwt}`
+				`https://www.googleapis.com/calendar/v3/calendars/srinivasjoshi60@gmail.com/events?key=${process.env.REACT_APP_GOOGLE_API_KEY}`
 			);
 			const response = await res.json();
 			console.log(response);
+			if (response.error) {
+				alert(`Error : ${response.error.message}`);
+				return;
+			}
 			setEvents(response.items);
 			setEvents((events) => events.reverse());
 		} catch (error) {

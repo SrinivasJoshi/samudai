@@ -16,6 +16,9 @@ function App() {
 	const [stateAddress, setStateAddress] = useState('');
 
 	useEffect(() => {
+		if (!provider) {
+			alert('Metamask not present');
+		}
 		provider
 			.send('eth_requestAccounts', [])
 			.catch(() => alert('Cannot proceed without metamask'));
@@ -95,6 +98,7 @@ function App() {
 					Sign In With Ethereum
 				</button>
 			)}
+			{!isMetaMaskConnected && <h1>Use metamask to access the site</h1>}
 		</div>
 	);
 }
