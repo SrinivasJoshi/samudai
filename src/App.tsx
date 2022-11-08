@@ -45,7 +45,7 @@ function App() {
 				did: 'yes',
 			},
 		};
-		const res = await fetch('https://dev-gcn.samudai.xyz/api/member/login', {
+		const res = await fetch('http://dev-gcn.samudai.xyz/api/member/login', {
 			method: 'POST',
 			body: JSON.stringify(reqBody),
 		});

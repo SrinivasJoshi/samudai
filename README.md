@@ -14,3 +14,7 @@ Deployed to : [link](https://samudai-assignment.netlify.app/)
 
 Once logged in using OAuth, I receive the required credentials and set it as JWT in localStorage.
 I use it as authorization head to get calendarId and calendar events, but results in error. The docs are confusing 😅.
+
+## Error in task 2 :
+
+Sending required data after "Sign in with Ethereum" is blocked by server. 403 error.
