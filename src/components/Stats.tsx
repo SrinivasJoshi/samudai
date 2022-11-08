@@ -3,7 +3,15 @@ import { useAppSelector } from '../app/hooks';
 import { selectAddress } from '../features/crypto/cryptoSlice';
 
 interface StatsProps {}
-
+interface transaction {
+	index: number;
+	timeStamp: string;
+	transactionIndex: string;
+	hash: string;
+	blockNumber: number;
+	from: string;
+	to: string;
+}
 const Stats: FunctionComponent<StatsProps> = () => {
 	const [blockHeight, setBlockHeight] = useState(0);
 	const [transactions, setTransactions] = useState([]);
@@ -14,7 +22,7 @@ const Stats: FunctionComponent<StatsProps> = () => {
 		const response = await res.json();
 		setBlockHeight(response.height);
 	};
-	const getLatestTransacstion = async () => {
+	const getLatestTransactions = async () => {
 		const res = await fetch(`https://api.etherscan.io/api
 		?module=account
 		&action=txlist
@@ -30,12 +38,13 @@ const Stats: FunctionComponent<StatsProps> = () => {
 		setTransactions(response.result);
 	};
 	useEffect(() => {
-		getLatestTransacstion();
+		getLatestTransactions();
 		getBlockHeight();
+		//get block height every 30 secs
 		const intervalCall = setInterval(() => getBlockHeight(), 30000);
 
 		return () => {
-			// clean up
+			// clean up to save API calls
 			clearInterval(intervalCall);
 		};
 	}, []);
@@ -48,8 +57,9 @@ const Stats: FunctionComponent<StatsProps> = () => {
 					<h2>List of latest transactions :</h2>
 					<div>
 						{transactions.length === 0 && 'No transactions done!'}
-						{transactions.map((tran: any, i: number) => {
-							if (i > 4) return;
+						{transactions.map((tran: transaction, i: number) => {
+							// display 5 recent transactions
+							if (i > 4) return '';
 							return (
 								<div className='transaction-div' key={tran.index}>
 									<li>Time Stamp : {tran.timeStamp} </li>

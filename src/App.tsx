@@ -37,7 +37,7 @@ function App() {
 		dispatch(addChainId(chainId));
 	};
 
-	async function sendInfo(address: string, chainId: number) {
+	async function sendInfoToServer(address: string, chainId: number) {
 		const reqBody = {
 			walletAddress: address,
 			chainId,
@@ -45,12 +45,11 @@ function App() {
 				did: 'yes',
 			},
 		};
-		const res = await fetch('http://dev-gcn.samudai.xyz/api/member/login', {
+		const res = await fetch('https://dev-gcn.samudai.xyz/api/member/login', {
 			method: 'POST',
 			body: JSON.stringify(reqBody),
-			mode: 'no-cors',
 		});
-		console.log(res);
+		console.log('Sending data to server : ' + res);
 	}
 	async function signInWithEthereum() {
 		const message = createSiweMessage(
@@ -63,7 +62,7 @@ function App() {
 		const chainId = await signer.getChainId();
 
 		setStateAddress(ad);
-		sendInfo(ad, chainId);
+		sendInfoToServer(ad, chainId);
 	}
 	function createSiweMessage(address: string, statement: string) {
 		const message = new SiweMessage({
@@ -98,7 +97,7 @@ function App() {
 					Sign In With Ethereum
 				</button>
 			)}
-			{!isMetaMaskConnected && <h1>Use metamask to access the site</h1>}
+			{!provider && <h1>Use metamask to access the site</h1>}
 		</div>
 	);
 }

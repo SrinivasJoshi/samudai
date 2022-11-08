@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 
 const Dashboard = () => {
 	const [events, setEvents] = useState([]);
-
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	useEffect(() => {
+		//sign in code
 		function handleCredentialResponse(response) {
+			console.log(response);
+			setIsLoggedIn(true);
 			localStorage.setItem('JWT', response.credential);
 			fetchEvents();
 		}
@@ -20,10 +23,35 @@ const Dashboard = () => {
 		google.accounts.id.prompt(); // also display the One Tap dialog
 	}, []);
 
-	const fetchEvents = async () => {
+	const fetchEmail = async () => {
+		//returns calendarId for fetching calendar events
 		try {
+			const myHeaders = new Headers();
+			const jwtToken = localStorage.getItem('JWT');
+			myHeaders.append('Authorization', `Bearer ${jwtToken}`);
 			const res = await fetch(
-				`https://www.googleapis.com/calendar/v3/calendars/srinivasjoshi60@gmail.com/events?key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+				'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+				{
+					headers: myHeaders,
+				}
+			);
+			const response = await res.json();
+			return response.items[0].id;
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	const fetchEvents = async () => {
+		const emailId = await fetchEmail();
+		try {
+			const myHeaders = new Headers();
+			const jwtToken = localStorage.getItem('JWT');
+			myHeaders.append('Authorization', `Bearer ${jwtToken}`);
+			const res = await fetch(
+				`https://www.googleapis.com/calendar/v3/calendars/${emailId}/events`,
+				{
+					headers: myHeaders,
+				}
 			);
 			const response = await res.json();
 			console.log(response);
@@ -41,7 +69,10 @@ const Dashboard = () => {
 		<div className='dashboard'>
 			<h1>Dashboard Page</h1>
 			<div className='events'>
-				{events.map((event) => {
+				{events.map((event, i) => {
+					if (i > 5) {
+						return '';
+					}
 					return (
 						<div className='dashboard-event'>
 							<li>Event summary : {event.summary}</li>
@@ -53,7 +84,7 @@ const Dashboard = () => {
 					);
 				})}
 			</div>
-			<div id='signInDiv'></div>
+			{!isLoggedIn && <div id='buttonDiv'></div>}
 		</div>
 	);
 };
